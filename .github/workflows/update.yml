@@ -1,0 +1,75 @@
+name: Update AUR package
+
+on:
+  pull_request:
+    paths: [PKGBUILD]
+  push:
+    branches: [main]
+    paths: [PKGBUILD]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-pkgbuild:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Derive pkgver and update checksums
+        run: |
+          TAG=$(grep "^_tag=" PKGBUILD | cut -d"'" -f2)
+          PKGVER=$(echo "${TAG}" | sed 's/^v//; s/-/./g')
+
+          sed -i "s/^pkgver=.*/pkgver=${PKGVER}/" PKGBUILD
+          sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
+
+          # Download release assets and compute checksums
+          BASE_URL="https://github.com/ahatem/IoskeleyMono/releases/download/${TAG}"
+          NORMAL_SHA=$(curl -sL "${BASE_URL}/IoskeleyMono-Normal.zip" | sha256sum | cut -d' ' -f1)
+          SEMI_SHA=$(curl -sL "${BASE_URL}/IoskeleyMono-SemiCondensed.zip" | sha256sum | cut -d' ' -f1)
+          COND_SHA=$(curl -sL "${BASE_URL}/IoskeleyMono-Condensed.zip" | sha256sum | cut -d' ' -f1)
+
+          # Replace the entire sha256sums block
+          awk -v n="$NORMAL_SHA" -v s="$SEMI_SHA" -v c="$COND_SHA" '
+            /^sha256sums=\(/ {
+              print "sha256sums=("
+              print "    \047" n "\047"
+              print "    \047" s "\047"
+              print "    \047" c "\047"
+              print "    \047SKIP\047"
+              print ")"
+              skip=1; next
+            }
+            skip && /^\)/ { skip=0; next }
+            skip { next }
+            { print }
+          ' PKGBUILD > PKGBUILD.tmp && mv PKGBUILD.tmp PKGBUILD
+
+      - name: Commit changes to PR branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add PKGBUILD
+          git diff --cached --quiet && exit 0
+          git commit -m "Update pkgver and checksums"
+          git push
+
+  publish-aur:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish to AUR
+        uses: KSXGitHub/github-actions-deploy-aur@v3.0.1
+        with:
+          pkgname: ttf-ioskeley-mono-bin
+          pkgbuild: ./PKGBUILD
+          commit_username: João M. Martins
+          commit_email: contact@jmartins.dev
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}

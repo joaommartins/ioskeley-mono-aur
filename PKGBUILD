@@ -1,7 +1,7 @@
 # Maintainer: João M. Martins <contact at jmartins dot dev>
 
 pkgname=ttf-ioskeley-mono-bin
-pkgver=2.0.0beta1
+pkgver=2.0.0.beta.1
 pkgrel=1
 pkgdesc='Custom Iosevka build tuned to mimic Berkeley Mono (Normal, SemiCondensed, Condensed widths)'
 arch=('any')
@@ -10,6 +10,7 @@ license=('OFL-1.1')
 provides=('ttf-ioskeley-mono')
 conflicts=('ttf-ioskeley-mono')
 
+# renovate: datasource=github-releases depName=ahatem/IoskeleyMono
 _tag='v2.0.0-beta.1'
 source=(
     "IoskeleyMono-Normal-${pkgver}.zip::${url}/releases/download/${_tag}/IoskeleyMono-Normal.zip"

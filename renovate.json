@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)PKGBUILD$/"],
+      "matchStrings": ["# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\n_tag='(?<currentValue>.*?)'"],
+      "versioningTemplate": "loose"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["custom.regex"],
+      "matchFileNames": ["PKGBUILD"],
+      "commitMessagePrefix": "aur:",
+      "commitMessageTopic": "{{depName}}",
+      "ignoreUnstable": false
+    }
+  ]
+}
