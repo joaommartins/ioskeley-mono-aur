@@ -1,0 +1,28 @@
+# Maintainer: João M. Martins <contact at jmartins dot dev>
+
+pkgname=ttf-ioskeley-mono-nerd-condensed-bin
+pkgver=2.0.0.beta.1
+pkgrel=1
+pkgdesc='Custom Iosevka build tuned to mimic Berkeley Mono, patched with Nerd Font glyphs (Condensed width)'
+arch=('any')
+url='https://github.com/ahatem/IoskeleyMono'
+license=('OFL-1.1')
+provides=('ttf-ioskeley-mono-nerd-condensed')
+conflicts=('ttf-ioskeley-mono-nerd-condensed')
+
+# renovate: datasource=github-releases depName=ahatem/IoskeleyMono
+_tag='v2.0.0-beta.1'
+source=(
+    "IoskeleyMono-NerdFont-Condensed-${pkgver}.zip::${url}/releases/download/${_tag}/IoskeleyMono-NerdFont-Condensed.zip"
+    "LICENSE::https://raw.githubusercontent.com/ahatem/IoskeleyMono/${_tag}/LICENSE"
+)
+sha256sums=(
+    '926956a936f95f083c44ddf0573c0082a9ff485234657ec246b90bfdc1b53710'
+    'SKIP'
+)
+
+package() {
+    install -d "${pkgdir}/usr/share/fonts/TTF"
+    install -m644 *.ttf "${pkgdir}/usr/share/fonts/TTF/"
+    install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
