@@ -30,9 +30,15 @@ jobs:
 
           # Download release assets and compute checksums
           BASE_URL="https://github.com/ahatem/IoskeleyMono/releases/download/${TAG}"
-          NORMAL_SHA=$(curl -sL "${BASE_URL}/IoskeleyMono-Normal.zip" | sha256sum | cut -d' ' -f1)
-          SEMI_SHA=$(curl -sL "${BASE_URL}/IoskeleyMono-SemiCondensed.zip" | sha256sum | cut -d' ' -f1)
-          COND_SHA=$(curl -sL "${BASE_URL}/IoskeleyMono-Condensed.zip" | sha256sum | cut -d' ' -f1)
+          for width in Normal SemiCondensed Condensed; do
+            if ! curl -sLf -o "/tmp/IoskeleyMono-${width}.zip" "${BASE_URL}/IoskeleyMono-${width}.zip"; then
+              echo "::error::Failed to download IoskeleyMono-${width}.zip from ${TAG}"
+              exit 1
+            fi
+          done
+          NORMAL_SHA=$(sha256sum /tmp/IoskeleyMono-Normal.zip | cut -d' ' -f1)
+          SEMI_SHA=$(sha256sum /tmp/IoskeleyMono-SemiCondensed.zip | cut -d' ' -f1)
+          COND_SHA=$(sha256sum /tmp/IoskeleyMono-Condensed.zip | cut -d' ' -f1)
 
           # Replace the entire sha256sums block
           awk -v n="$NORMAL_SHA" -v s="$SEMI_SHA" -v c="$COND_SHA" '
