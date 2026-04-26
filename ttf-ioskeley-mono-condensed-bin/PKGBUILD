@@ -11,7 +11,7 @@ provides=('ttf-ioskeley-mono-condensed')
 conflicts=('ttf-ioskeley-mono-condensed')
 
 # renovate: datasource=github-releases depName=ahatem/IoskeleyMono
-_tag='v2.0.0-beta.1'
+_tag='v2.0.0'
 source=(
     "IoskeleyMono-Condensed-${pkgver}.zip::${url}/releases/download/${_tag}/IoskeleyMono-Condensed.zip"
     "LICENSE::https://raw.githubusercontent.com/ahatem/IoskeleyMono/${_tag}/LICENSE"
