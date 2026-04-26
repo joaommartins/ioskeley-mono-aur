@@ -11,7 +11,7 @@ provides=('ttf-ioskeley-mono-nerd-semicondensed')
 conflicts=('ttf-ioskeley-mono-nerd-semicondensed')
 
 # renovate: datasource=github-releases depName=ahatem/IoskeleyMono
-_tag='v2.0.0-beta.1'
+_tag='v2.0.0'
 source=(
     "IoskeleyMono-NerdFont-SemiCondensed-${pkgver}.zip::${url}/releases/download/${_tag}/IoskeleyMono-NerdFont-SemiCondensed.zip"
     "LICENSE::https://raw.githubusercontent.com/ahatem/IoskeleyMono/${_tag}/LICENSE"
